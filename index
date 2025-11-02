@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Bubble Wrap - Ultimate Stress Relief</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            position: relative;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .bubble-container {
+            display: grid;
+            gap: 8px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            max-width: 100%;
+            position: relative;
+        }
+
+        .bubble {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(255, 255, 255, 0.6) 20%, 
+                rgba(200, 200, 255, 0.4) 60%, 
+                rgba(150, 150, 255, 0.2) 100%);
+            box-shadow: 
+                inset -2px -2px 5px rgba(0, 0, 0, 0.1),
+                inset 2px 2px 5px rgba(255, 255, 255, 0.8),
+                0 2px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bubble::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            width: 40%;
+            height: 40%;
+            background: radial-gradient(circle, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                transparent 70%);
+            border-radius: 50%;
+        }
+
+        .bubble:hover:not(.popped) {
+            transform: scale(1.05);
+            box-shadow: 
+                inset -2px -2px 5px rgba(0, 0, 0, 0.15),
+                inset 2px 2px 5px rgba(255, 255, 255, 0.9),
+                0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .bubble.popped {
+            animation: pop 0.4s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(150, 150, 255, 0.6) 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-fly 0.8s ease-out forwards;
+        }
+
+        @keyframes particle-fly {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .combo-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 1000;
+        }
+
+        .combo-indicator.show {
+            animation: combo-pop 1s ease-out forwards;
+        }
+
+        @keyframes combo-pop {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .settings-panel {
+            position: fixed;
+            right: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 200;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .settings-panel.open {
+            right: 0;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .settings-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .setting-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .setting-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .achievement {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 300;
+        }
+
+        .achievement.show {
+            transform: translateX(0);
+        }
+
+        .achievement-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.25rem;
+        }
+
+        .achievement-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                justify-content: center;
+                text-align: center;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .bubble {
+                width: 45px;
+                height: 45px;
+            }
+
+            .bubble-container {
+                gap: 6px;
+                padding: 1rem;
+            }
+
+            .settings-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>
+                <span>🫧</span>
+                Digital Bubble Wrap
+            </h1>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="popped-count">0</span>
+                    <span class="stat-label">Popped</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="combo-count">0</span>
+                    <span class="stat-label">Combo</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="total-count">0</span>
+                    <span class="stat-label">Total</span>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="btn-primary" onclick="resetBubbles()">New Sheet</button>
+                <button class="btn-secondary" onclick="toggleSettings()">Settings</button>
+                <button class="btn-danger" onclick="clearAll()">Clear All</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="bubble-container" id="bubble-container"></div>
+    </main>
+
+    <div class="combo-indicator" id="combo-indicator"></div>
+
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-header">
+            <h2>Settings</h2>
+            <button class="settings-close" onclick="toggleSettings()">✕</button>
+        </div>
+        
+        <div class="setting-group">
+            <label class="setting-label">Bubble Size</label>
+            <input type="range" class="slider" id="size-slider" min="40" max="80" value="60">
+        </div>
+
+        <div class="setting-group">
+            <label class="setting-label">Grid Size</label>
+            <input type="range" class="slider" id="grid-slider" min="5" max="15" value="10">
+        </div>
+
+        <div class="setting-group">
+            <label class="setting-label">Sound Volume</label>
+            <input type="range" class="slider" id="volume-slider" min="0" max="100" value="50">
+        </div>
+
+        <div class="setting-group">
+            <label class="setting-label">Sound Effects</label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="sound-toggle" checked>
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-group">
+            <label class="setting-label">Particles</label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="particles-toggle" checked>
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-group">
+            <label class="setting-label">Combo Mode</label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="combo-toggle" checked>
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="achievement" id="achievement">
+        <div class="achievement-title" id="achievement-title"></div>
+        <div class="achievement-desc" id="achievement-desc"></div>
+    </div>
+
+    <script>
+        // Audio Context for sound generation
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioContext = new AudioContext();
+
+        // Game state
+        let poppedCount = 0;
+        let totalCount = 0;
+        let comboCount = 0;
+        let lastPopTime = 0;
+        let gridSize = 10;
+        let bubbleSize = 60;
+        let soundEnabled = true;
+        let particlesEnabled = true;
+        let comboEnabled = true;
+        let volume = 0.5;
+
+        // Sound generation using Web Audio API
+        function playPopSound(frequency = 800, duration = 0.1) {
+            if (!soundEnabled) return;
+
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        // Create particle effect
+        function createParticles(x, y) {
+            if (!particlesEnabled) return;
+
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const angle = (Math.PI * 2 * i) / 8;
+                const distance = 50 + Math.random() * 50;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 800);
+            }
+        }
+
+        // Show achievement
+        function showAchievement(title, description) {
+            const achievement = document.getElementById('achievement');
+            const titleEl = document.getElementById('achievement-title');
+            const descEl = document.getElementById('achievement-desc');
+            
+            titleEl.textContent = title;
+            descEl.textContent = description;
+            
+            achievement.classList.add('show');
+            
+            setTimeout(() => {
+                achievement.classList.remove('show');
+            }, 3000);
+        }
+
+        // Update combo
+        function updateCombo() {
+            if (!comboEnabled) return;
+
+            const now = Date.now();
+            if (now - lastPopTime < 1000) {
+                comboCount++;
+                if (comboCount > 1) {
+                    const indicator = document.getElementById('combo-indicator');
+                    indicator.textContent = `${comboCount}x COMBO!`;
+                    indicator.classList.remove('show');
+                    void indicator.offsetWidth; // Trigger reflow
+                    indicator.classList.add('show');
+                    
+                    // Play combo sound
+                    playPopSound(400 + comboCount * 100, 0.15);
+                    
+                    // Check for combo achievements
+                    if (comboCount === 10) {
+                        showAchievement('Combo Master!', '10x combo achieved!');
+                    } else if (comboCount === 25) {
+                        showAchievement('Combo Legend!', '25x combo achieved!');
+                    } else if (comboCount === 50) {
+                        showAchievement('Combo God!', '50x combo achieved!');
+                    }
+                }
+            } else {
+                comboCount = 1;
+            }
+            lastPopTime = now;
+            
+            document.getElementById('combo-count').textContent = comboCount;
+        }
+
+        // Create bubble
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            
+            bubble.addEventListener('click', function(e) {
+                if (this.classList.contains('popped')) return;
+                
+                this.classList.add('popped');
+                
+                // Update stats
+                poppedCount++;
+                totalCount++;
+                document.getElementById('popped-count').textContent = poppedCount;
+                document.getElementById('total-count').textContent = totalCount;
+                
+                // Update combo
+                updateCombo();
+                
+                // Create particles
+                const rect = this.getBoundingClientRect();
+                createParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                
+                // Play sound with random pitch
+                const pitch = 600 + Math.random() * 400;
+                playPopSound(pitch, 0.1);
+                
+                // Check achievements
+                if (totalCount === 100) {
+                    showAchievement('Century!', '100 bubbles popped!');
+                } else if (totalCount === 500) {
+                    showAchievement('Bubble Expert!', '500 bubbles popped!');
+                } else if (totalCount === 1000) {
+                    showAchievement('Bubble Master!', '1000 bubbles popped!');
+                } else if (totalCount === 5000) {
+                    showAchievement('Bubble Legend!', '5000 bubbles popped!');
+                }
+                
+                // Auto-reset if all popped
+                setTimeout(() => {
+                    const container = document.getElementById('bubble-container');
+                    const remaining = container.querySelectorAll('.bubble:not(.popped)').length;
+                    if (remaining === 0) {
+                        showAchievement('Sheet Complete!', 'All bubbles popped!');
+                        setTimeout(resetBubbles, 1500);
+                    }
+                }, 500);
+            });
+            
+            return bubble;
+        }
+
+        // Initialize bubbles
+        function initBubbles() {
+            const container = document.getElementById('bubble-container');
+            container.innerHTML = '';
+            container.style.gridTemplateColumns = `repeat(${gridSize}, ${bubbleSize}px)`;
+            
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                container.appendChild(createBubble());
+            }
+            
+            poppedCount = 0;
+            document.getElementById('popped-count').textContent = 0;
+        }
+
+        // Reset bubbles
+        function resetBubbles() {
+            initBubbles();
+            comboCount = 0;
+            document.getElementById('combo-count').textContent = 0;
+        }
+
+        // Clear all bubbles
+        function clearAll() {
+            const bubbles = document.querySelectorAll('.bubble:not(.popped)');
+            let delay = 0;
+            
+            bubbles.forEach(bubble => {
+                setTimeout(() => {
+                    bubble.click();
+                }, delay);
+                delay += 30;
+            });
+        }
+
+        // Toggle settings panel
+        function toggleSettings() {
+            const panel = document.getElementById('settings-panel');
+            panel.classList.toggle('open');
+        }
+
+        // Settings event listeners
+        document.getElementById('size-slider').addEventListener('input', function(e) {
+            bubbleSize = parseInt(e.target.value);
+            resetBubbles();
+        });
+
+        document.getElementById('grid-slider').addEventListener('input', function(e) {
+            gridSize = parseInt(e.target.value);
+            resetBubbles();
+        });
+
+        document.getElementById('volume-slider').addEventListener('input', function(e) {
+            volume = parseInt(e.target.value) / 100;
+        });
+
+        document.getElementById('sound-toggle').addEventListener('change', function(e) {
+            soundEnabled = e.target.checked;
+        });
+
+        document.getElementById('particles-toggle').addEventListener('change', function(e) {
+            particlesEnabled = e.target.checked;
+        });
+
+        document.getElementById('combo-toggle').addEventListener('change', function(e) {
+            comboEnabled = e.target.checked;
+            if (!comboEnabled) {
+                comboCount = 0;
+                document.getElementById('combo-count').textContent = 0;
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            initBubbles();
+            
+            // Resume audio context on first interaction
+            document.addEventListener('click', () => {
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+            }, { once: true });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'r' || e.key === 'R') {
+                resetBubbles();
+            } else if (e.key === 'c' || e.key === 'C') {
+                clearAll();
+            } else if (e.key === 's' || e.key === 'S') {
+                toggleSettings();
+            }
+        });
+    </script>
+</body>
+</html>
